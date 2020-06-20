@@ -37,24 +37,28 @@ class GameObject:
     def engage(self, agent) -> Union[bool, Agent]:
         """makes a copy of agent, simulates its interaction with this GameObject
         returns that agent, if move is possible, otherwise returns false"""
-        can_engage = True
         new_agent_stats = agent.statistics.copy()
 
         if self.statistics["HP"] > 0:  # enemies
             # simulate battle
-            new_agent_stats["HP"] -= (self.statistics["HP"] // (new_agent_stats["ATK"] - self.statistics["DEF"])) *\
-                                     (self.statistics["ATK"] - new_agent_stats["DEF"])
+            if new_agent_stats["ATK"] <= self.statistics["DEF"]:
+                return False
+            if new_agent_stats["DEF"] < self.statistics["ATK"]:
+                new_agent_stats["HP"] -= (self.statistics["HP"] // (new_agent_stats["ATK"] - self.statistics["DEF"])) *\
+                                         (self.statistics["ATK"] - new_agent_stats["DEF"])
             new_agent_stats["EXP"] += int(new_agent_stats["EXP_MULT"] * self.statistics["EXP"])
-            can_engage = new_agent_stats["HP"] > 0
+            if new_agent_stats["HP"] <= 0:
+                return False
         elif isinstance(self.statistics["REQUIRES_KEYITEM"], KeyItem):  # lock or wall
             # uses key item
+            if new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] < 1:
+                return False
             new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] -= 1
-            can_engage = new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] >= 0
         else:  # stat increase item
             new_agent_stats["ATK"] += self.statistics["ATK_UP"]
             new_agent_stats["DEF"] += self.statistics["DEF_UP"]
             new_agent_stats["HP"] += int(new_agent_stats["HP_MULT"] * self.statistics["HP_UP"])
 
-        new_agent = Agent(new_agent_stats)
+        new_agent = Agent(new_agent_stats, agent.leveling_plan)
         new_agent.level_up()
-        return can_engage and new_agent
+        return new_agent

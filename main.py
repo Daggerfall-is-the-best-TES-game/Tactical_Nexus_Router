@@ -1,10 +1,11 @@
 from collections import defaultdict
-from agent import Agent
+from agent import Agent, Level
 from environment import GameObject
 
 if __name__ == "__main__":
+    leveling_plan = defaultdict(lambda x: Level.ATK)
     stats = defaultdict(int, {"HP": 1000, "ATK": 50, "HP_MULT": 1.0, "EXP_MULT": 1.0})
-    agent = Agent(stats)
+    agent = Agent(stats, leveling_plan)
     print(agent.statistics)
     power_gem = GameObject(defaultdict(int, {"ATK_UP": 2}))
     guard_gem = GameObject(defaultdict(int, {"DEF_UP": 2}))
