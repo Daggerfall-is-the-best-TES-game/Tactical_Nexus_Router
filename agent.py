@@ -18,5 +18,13 @@ class Agent:
         KeyItem.GLORY_KEY - Amount of glory keys the agent has
         KeyItem.WINNER_KEY - Amount of winner keys the agent has
         KeyItem.RETURN_KEY - Amount of return keys the agent has
+        ATK_FOR_LVL - function that takes an integer LEVEL and returns how much ATK is gained
+        by a level LEVEL character on level_up
+        DEF_FOR_LVL - function that takes an integer LEVEL and returns how much DEF is gained
+        by a level LEVEL character on level_up
         """
         self.statistics = statistics
+
+    def level_up(self):
+        pass
+

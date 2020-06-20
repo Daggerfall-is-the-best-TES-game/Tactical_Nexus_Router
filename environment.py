@@ -1,4 +1,6 @@
 from enum import Enum
+from agent import Agent
+from typing import Union
 
 
 class KeyItem(Enum):
@@ -32,7 +34,7 @@ class GameObject:
         """
         self.statistics = statistics
 
-    def engage(self, agent):
+    def engage(self, agent) -> Union[bool, Agent]:
         """makes a copy of agent, simulates its interaction with this GameObject
         returns that agent, if move is possible, otherwise returns false"""
         can_engage = True
@@ -42,14 +44,17 @@ class GameObject:
             # simulate battle
             new_agent_stats["HP"] -= (self.statistics["HP"] // (new_agent_stats["ATK"] - self.statistics["DEF"])) *\
                                      (self.statistics["ATK"] - new_agent_stats["DEF"])
-            new_agent_stats["EXP"] += new_agent_stats["EXP_MULT"] * self.statistics["EXP"]
+            new_agent_stats["EXP"] += int(new_agent_stats["EXP_MULT"] * self.statistics["EXP"])
             can_engage = new_agent_stats["HP"] > 0
-        elif self.statistics["REQUIRES_KEYITEM"]:  # lock or wall
+        elif isinstance(self.statistics["REQUIRES_KEYITEM"], KeyItem):  # lock or wall
             # uses key item
             new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] -= 1
             can_engage = new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] >= 0
         else:  # stat increase item
             new_agent_stats["ATK"] += self.statistics["ATK_UP"]
             new_agent_stats["DEF"] += self.statistics["DEF_UP"]
-            new_agent_stats["HP"] += new_agent_stats["HP_MULT"] * self.statistics["HP_UP"]
-        return can_engage and new_agent_stats
+            new_agent_stats["HP"] += int(new_agent_stats["HP_MULT"] * self.statistics["HP_UP"])
+
+        new_agent = Agent(new_agent_stats)
+        new_agent.level_up()
+        return can_engage and new_agent
