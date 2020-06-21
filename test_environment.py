@@ -31,7 +31,7 @@ class TestGameObject(TestCase):
         blue_potion = GameObject(defaultdict(int, {"HP_UP": 800}))
         heavenly_potion = GameObject(defaultdict(int, {"HP_UP": 3000, "ATK_UP": 3, "DEF_UP": 3}))
         yellow_lock = GameObject(defaultdict(int, {"REQUIRES_KEYITEM": KeyItem.YELLOW_KEY}))
-        yellow_key = GameObject(defaultdict(int, {"GIVES_KEYITEM": KeyItem.YELLOW_KEY}))
+        yellow_key = GameObject(defaultdict(int, {"GIVES_KEYITEM": (KeyItem.YELLOW_KEY, 1)}))
 
         junior_fighter = GameObject(defaultdict(int, {"HP": 120, "ATK": 55, "DEF": 25, "EXP": 2}))
         fighter = GameObject(defaultdict(int, {"HP": 320, "ATK": 110, "DEF": 40, "EXP": 5}))

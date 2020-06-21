@@ -32,7 +32,7 @@ class GameObject:
         HP_MULT_UP - Amount of HP_MULT an object gives
         EXP_MULT_UP -  Amount of EXP_MULT an object gives
         REQUIRES_KEYITEM - type of keyitem an object takes, as an enum
-        GIVES_KEYITEM - type of keyitem an object gives, as an enum
+        GIVES_KEYITEM - tuple containing type of keyitem an object gives, as an enum, then quantity given (KeyItem, int)
         """
         self.statistics = statistics
 
@@ -52,13 +52,13 @@ class GameObject:
             new_agent_stats["EXP"] += int(new_agent_stats["EXP_MULT"] * self.statistics["EXP"])
             if new_agent_stats["HP"] <= 0:
                 return False
-        elif isinstance(self.statistics["REQUIRES_KEYITEM"], KeyItem):  # lock or wall
+        elif self.statistics["REQUIRES_KEYITEM"]:  # lock or wall
             # uses key item
-            if new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] < 1:
+            if not new_agent_stats[self.statistics["REQUIRES_KEYITEM"]]:
                 return False
             new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] -= 1
-        elif isinstance(self.statistics["GIVES_KEYITEM"], KeyItem):
-            new_agent_stats[self.statistics["GIVES_KEYITEM"]] += 1
+        elif self.statistics["GIVES_KEYITEM"]:
+            new_agent_stats[self.statistics["GIVES_KEYITEM"][0]] += self.statistics["GIVES_KEYITEM"][1]
         else:  # stat increase item
             new_agent_stats["ATK"] += self.statistics["ATK_UP"]
             new_agent_stats["DEF"] += self.statistics["DEF_UP"]
