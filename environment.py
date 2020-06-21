@@ -46,7 +46,8 @@ class GameObject:
             if new_agent_stats["ATK"] <= self.statistics["DEF"]:
                 return False
             if new_agent_stats["DEF"] < self.statistics["ATK"]:
-                new_agent_stats["HP"] -= (ceil(self.statistics["HP"] / (new_agent_stats["ATK"] - self.statistics["DEF"])) - 1) *\
+                new_agent_stats["HP"] -= (ceil(self.statistics["HP"] /
+                                               (new_agent_stats["ATK"] - self.statistics["DEF"])) - 1) *\
                                          (self.statistics["ATK"] - new_agent_stats["DEF"])
             new_agent_stats["EXP"] += int(new_agent_stats["EXP_MULT"] * self.statistics["EXP"])
             if new_agent_stats["HP"] <= 0:
