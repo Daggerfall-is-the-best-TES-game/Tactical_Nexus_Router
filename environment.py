@@ -1,4 +1,6 @@
 from enum import Enum
+from math import ceil
+
 from agent import Agent
 from typing import Union
 
@@ -44,7 +46,7 @@ class GameObject:
             if new_agent_stats["ATK"] <= self.statistics["DEF"]:
                 return False
             if new_agent_stats["DEF"] < self.statistics["ATK"]:
-                new_agent_stats["HP"] -= (self.statistics["HP"] // (new_agent_stats["ATK"] - self.statistics["DEF"])) *\
+                new_agent_stats["HP"] -= (ceil(self.statistics["HP"] / (new_agent_stats["ATK"] - self.statistics["DEF"])) - 1) *\
                                          (self.statistics["ATK"] - new_agent_stats["DEF"])
             new_agent_stats["EXP"] += int(new_agent_stats["EXP_MULT"] * self.statistics["EXP"])
             if new_agent_stats["HP"] <= 0:
@@ -54,6 +56,8 @@ class GameObject:
             if new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] < 1:
                 return False
             new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] -= 1
+        elif isinstance(self.statistics["GIVES_KEYITEM"], KeyItem):
+            new_agent_stats[self.statistics["GIVES_KEYITEM"]] += 1
         else:  # stat increase item
             new_agent_stats["ATK"] += self.statistics["ATK_UP"]
             new_agent_stats["DEF"] += self.statistics["DEF_UP"]
