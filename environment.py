@@ -18,10 +18,16 @@ class KeyItem(Enum):
     RETURN_KEY = 9
 
 
+class Structure(Enum):
+    WALL = 0
+    UP_STAIRS = 1
+    DOWN_STAIRS = 2
+
+
 class GameObject:
     def __init__(self, statistics):
         """
-        :param statistics:a default dictionary (default 0) that contains a subset of the following:
+        :param statistics:a dictionary that contains a subset of the following:
         HP - Amount of HP an object has
         ATK - Amount of ATK an object has
         DEF - Amount of DEF an object has
@@ -33,6 +39,8 @@ class GameObject:
         EXP_MULT_UP -  Amount of EXP_MULT an object gives
         REQUIRES_KEYITEM - type of keyitem an object takes, as an enum
         GIVES_KEYITEM - tuple containing type of keyitem an object gives, as an enum, then quantity given (KeyItem, int)
+        STRUCTURE - type of structure an object is, as an enum
+        REPR - string displayed by repr function
         """
         self.statistics = statistics
 
@@ -41,7 +49,7 @@ class GameObject:
         returns that agent, if move is possible, otherwise returns false"""
         new_agent_stats = agent.statistics.copy()
 
-        if self.statistics["HP"] > 0:  # enemies
+        if "HP" in self.statistics:  # enemies
             # simulate battle
             if new_agent_stats["ATK"] <= self.statistics["DEF"]:
                 return False
@@ -52,18 +60,21 @@ class GameObject:
             new_agent_stats["EXP"] += int(new_agent_stats["EXP_MULT"] * self.statistics["EXP"])
             if new_agent_stats["HP"] <= 0:
                 return False
-        elif self.statistics["REQUIRES_KEYITEM"]:  # lock or wall
+        elif "REQUIRES_KEYITEM" in self.statistics:  # lock or wall
             # uses key item
             if not new_agent_stats[self.statistics["REQUIRES_KEYITEM"]]:
                 return False
             new_agent_stats[self.statistics["REQUIRES_KEYITEM"]] -= 1
-        elif self.statistics["GIVES_KEYITEM"]:
+        elif "GIVES_KEYITEM" in self.statistics:
             new_agent_stats[self.statistics["GIVES_KEYITEM"][0]] += self.statistics["GIVES_KEYITEM"][1]
         else:  # stat increase item
-            new_agent_stats["ATK"] += self.statistics["ATK_UP"]
-            new_agent_stats["DEF"] += self.statistics["DEF_UP"]
-            new_agent_stats["HP"] += int(new_agent_stats["HP_MULT"] * self.statistics["HP_UP"])
+            new_agent_stats["ATK"] += self.statistics.setdefault("ATK_UP", 0)
+            new_agent_stats["DEF"] += self.statistics.setdefault("DEF_UP", 0)
+            new_agent_stats["HP"] += int(new_agent_stats["HP_MULT"] * self.statistics.setdefault("HP_UP", 0))
 
         new_agent = Agent(new_agent_stats, agent.leveling_plan)
         new_agent.level_up()
         return new_agent
+
+    def __repr__(self):
+        return self.statistics.setdefault("REPR", ".")
