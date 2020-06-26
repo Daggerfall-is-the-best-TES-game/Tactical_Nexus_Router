@@ -7,5 +7,5 @@ from board import Tactical_tutorial_board
 
 if __name__ == "__main__":
 
-    print(Tactical_tutorial_board[:, :, 1, 0])
+    print(Tactical_tutorial_board[0, 1, :, :])
 

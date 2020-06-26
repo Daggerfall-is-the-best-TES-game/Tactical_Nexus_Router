@@ -25,7 +25,7 @@ class Structure(Enum):
 
 
 class GameObject:
-    def __init__(self, statistics):
+    def __init__(self, statistics={}):
         """
         :param statistics:a dictionary that contains a subset of the following:
         HP - Amount of HP an object has
