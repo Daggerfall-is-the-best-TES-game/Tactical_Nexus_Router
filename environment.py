@@ -22,7 +22,7 @@ class Structure(Enum):
     WALL = 0
     UP_STAIRS = 1
     DOWN_STAIRS = 2
-
+    ONE_WAY = 3
 
 class GameObject:
     def __init__(self, statistics={}):
